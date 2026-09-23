@@ -1,0 +1,132 @@
+universe_size: 300
+window_days: 30          # trailing window; prior window is the 30 days before that
+db_path: data/truffle.db
+cache_dir: data/cache
+
+cache:
+  ttl_seconds: 86400     # dev re-runs inside a day never re-hit an API
+
+# Weights are renormalised over the metrics actually present for a coin.
+weights:
+  volume_reputable: 0.20
+  tvl: 0.20
+  contributors: 0.20
+  commits: 0.15
+  exchange_count: 0.10
+  rel_btc: 0.15
+
+scoring:
+  # Averaging fewer percentiles gives a WIDER spread, so without this sparsely measured
+  # coins take both extremes of the leaderboard. On: the composite is rescaled about 50 by
+  # sqrt(sum q^2)/sqrt(sum p^2) (full-coverage spread / this coin's), equalising spread
+  # across coverage levels without touching the ordering inside one. Off: the plain
+  # renormalised average, i.e. score == score_raw.
+  variance_shrinkage: true
+
+exclusions:
+  # CoinGecko category ids checked first; the heuristics below are the fallback
+  # for coins CoinGecko has not categorised.
+  categories:
+    - stablecoins
+    - yield-bearing-stablecoins
+    - bridged-tokens
+    - wrapped-tokens
+    - binance-peg-tokens
+    - tokenized-btc
+    - tokenized-gold
+    - tokenized-treasuries
+    - tokenized-t-bills
+    - tokenized-money-market-fund-mmfs
+    - liquid-staking-tokens
+    - liquid-staked-eth
+    - liquid-staked-btc
+    - liquid-staked-sol
+  # Matched case-insensitively against symbol OR name as whole words / prefixes.
+  symbols:
+    - USDT
+    - USDC
+    - DAI
+    - BUSD
+    - TUSD
+    - USDE
+    - USDS
+    - USD1
+    - FDUSD
+    - PYUSD
+    - USDD
+    - USDP
+    - GUSD
+    - LUSD
+    - FRAX
+    - EURC
+    - EURS
+    - EURT
+    - XAUT
+    - PAXG
+    - WBTC
+    - WETH
+    - WBETH
+    - WEETH
+    - WSTETH
+    - STETH
+    - RETH
+    - CBBTC
+    - CBETH
+    - SOLVBTC
+    - LBTC
+    - BSC-USD
+    - JITOSOL
+    - MSOL
+    - RSETH
+    - EZETH
+    - SUSDE
+    - SUSDS
+    - BNSOL
+    - WBNB
+    - WSOL
+  # Substrings in the coin NAME that mark a wrapper/bridge/receipt token.
+  name_contains:
+    - wrapped
+    - bridged
+    - "staked "
+    - peg-
+    - binance-peg
+    - tether
+    - usd coin
+  # Wrapper-prefix rule: symbol starts with one of these AND stripping the prefix
+  # yields a symbol that is itself in the universe (WETH->ETH excludes; WAVES->AVES
+  # is not a coin, so WAVES survives). Avoids the false positives a bare regex gives.
+  wrapper_prefixes: [W, ST, WST, B, R, CB, M, J, BN]
+  # Soft peg check: symbol mentions a fiat ticker AND price sits on the peg.
+  peg_tolerance: 0.03
+
+github:
+  min_repo_stars: 50
+  max_repos_per_coin: 3
+  commit_lookback_days: 70   # first fetch pulls this far back; later runs use the watermark
+
+metadata:
+  refresh_days: 30
+
+http:
+  timeout: 30
+  max_retries: 4
+  backoff_base: 1.5
+  backoff_cap: 60
+  max_pause_seconds: 120   # a quota resetting later than this disables that host for the run
+  # Monthly call-credit ceilings per host; the run aborts if the projection exceeds
+  # what is left this calendar month (override with --ignore-budget).
+  monthly_budget:
+    api.coingecko.com: 10000
+  # Per-host budgets. With a Demo key the monthly credit cap, not the rate, is binding.
+  hosts:
+    api.coingecko.com:
+      rate_per_min: 30    # authenticated Demo tier allows 100/min, so 30 leaves plenty of headroom
+                          # for burst 429s. The real ceiling is 10,000 call credits per MONTH
+                          # (see http.monthly_budget) -- a 300-coin run costs ~1000 of them.
+    pro-api.coingecko.com:
+      rate_per_min: 400
+    api.llama.fi:
+      rate_per_min: 80
+    api.github.com:
+      rate_per_min: 60
