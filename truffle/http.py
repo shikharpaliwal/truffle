@@ -81,7 +81,7 @@ class HttpClient:
                         for host, v in h["hosts"].items() if v.get("weight_per_min")}
         self._local = threading.local()      # requests.Session is not thread-safe; give each one its own
         self._stats_lock = threading.Lock()
-        self.cg_key, self.gh_token = cfg["coingecko_key"], cfg["github_token"]
+        self.cg_key = cfg["coingecko_key"]
         self.max_pause = h.get("max_pause_seconds", 120)
         self.disabled = {}  # host -> why; set when a reset is further off than max_pause
         self.calls = 0
@@ -101,13 +101,8 @@ class HttpClient:
         return self.limiters.get(urlparse(url).netloc, self.default_limiter)
 
     def _auth(self, url, headers, params):
-        host = urlparse(url).netloc
-        if "coingecko" in host and self.cg_key:
+        if "coingecko" in urlparse(url).netloc and self.cg_key:
             params = {**(params or {}), "x_cg_demo_api_key": self.cg_key}
-        if host == "api.github.com":
-            headers = {**headers, "Accept": "application/vnd.github+json"}
-            if self.gh_token:
-                headers["Authorization"] = f"Bearer {self.gh_token}"
         return headers, params
 
     def get_json(self, source, url, params=None, cache_key=None, headers=None, allow_404=False, cache=True):
@@ -159,7 +154,6 @@ class HttpClient:
                 continue
             if r.status_code >= 400:
                 raise ApiError(f"{r.status_code} {url}: {r.text[:200]}")
-            self._github_budget(r, limiter)
             try:
                 return r.json()
             except ValueError:
@@ -178,17 +172,6 @@ class HttpClient:
         self.disabled[host] = f"quota resets in {wait / 60:.0f} min (> max_pause {self.max_pause}s)"
         log.warning("%s: %s -- skipping it for the rest of this run", host, self.disabled[host])
         return True
-
-    def _github_budget(self, r, limiter):
-        # Pre-emptively idle (or give up) when the remaining budget is nearly gone.
-        rem = r.headers.get("X-RateLimit-Remaining")
-        if rem is None or int(rem) > 2:
-            return
-        if self._budget_exhausted(r, urlparse(r.url).netloc):
-            return
-        wait = self._reset_wait(r) or 1
-        log.warning("budget low; pausing %.0fs until reset", wait)
-        limiter.pause(wait)
 
     def _sleep(self, limiter, attempt, why, resp=None):
         retry_after = None

@@ -27,8 +27,6 @@ def main(argv=None):
         format="%(asctime)s %(levelname)-7s %(name)-22s %(message)s", datefmt="%H:%M:%S")
     logging.getLogger("urllib3").setLevel(logging.WARNING)
     cfg = config.load(args.config)
-    if not cfg["github_token"]:
-        logging.warning("no GITHUB_TOKEN: GitHub is capped at 60 req/hr, commit metrics will be sparse")
     run_id = Pipeline(cfg, args).run()
     return 0 if run_id is not None or args.dry_run else 1
 

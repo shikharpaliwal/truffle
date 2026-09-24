@@ -24,10 +24,10 @@ def test_usage_accumulates_per_month(tmp_path):
 def test_record_usage_persists_http_counts(tmp_path):
     p = pipeline(tmp_path)
     p.http.per_host[CG_HOST] = 17
-    p.http.per_host["api.github.com"] = 5
+    p.http.per_host["api.llama.fi"] = 5
     p.record_usage()
     assert usage_this_month(p.con, CG_HOST) == 17
-    assert usage_this_month(p.con, "api.github.com") == 5
+    assert usage_this_month(p.con, "api.llama.fi") == 5
 
 
 def test_budget_allows_a_run_that_fits(tmp_path):

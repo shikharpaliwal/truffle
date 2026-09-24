@@ -22,5 +22,4 @@ def load(path=None):
     cfg["db_path"] = ROOT / cfg["db_path"]
     cfg["cache_dir"] = ROOT / cfg["cache_dir"]
     cfg["coingecko_key"] = os.getenv("COINGECKO_API_KEY") or None
-    cfg["github_token"] = os.getenv("GITHUB_TOKEN") or None
     return cfg

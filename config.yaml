@@ -6,13 +6,11 @@ cache_dir: data/cache
 cache:
   ttl_seconds: 86400     # dev re-runs inside a day never re-hit an API
 
-# Weights are renormalised over the metrics actually present for a coin.
+# The composite. Weights are renormalised over the metrics actually present for a coin,
+# so only the ratio matters. A metric collected but left out of this map (tvl,
+# exchange_count) is still stored every run -- it just does not feed the score.
 weights:
   volume_reputable: 0.20
-  tvl: 0.20
-  contributors: 0.20
-  commits: 0.15
-  exchange_count: 0.10
   rel_btc: 0.15
 
 scoring:
@@ -21,6 +19,7 @@ scoring:
   # sqrt(sum q^2)/sqrt(sum p^2) (full-coverage spread / this coin's), equalising spread
   # across coverage levels without touching the ordering inside one. Off: the plain
   # renormalised average, i.e. score == score_raw.
+  # Over two weighted metrics f is two-valued: 1.0 with both present, 5/7 with either one.
   variance_shrinkage: true
 
 exclusions:
@@ -100,11 +99,6 @@ exclusions:
   # Soft peg check: symbol mentions a fiat ticker AND price sits on the peg.
   peg_tolerance: 0.03
 
-github:
-  min_repo_stars: 50
-  max_repos_per_coin: 3
-  commit_lookback_days: 70   # first fetch pulls this far back; later runs use the watermark
-
 metadata:
   refresh_days: 30
 
@@ -148,8 +142,6 @@ http:
       rate_per_min: 400
     api.llama.fi:
       rate_per_min: 80
-    api.github.com:
-      rate_per_min: 60
     # Binance limits by request WEIGHT per minute, not by call count, and reports the
     # running total in x-mbx-used-weight-1m. rate_per_min is the request spacing;
     # weight_per_min is the server's own cap (klines cost 2, exchangeInfo 20,

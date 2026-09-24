@@ -1,7 +1,6 @@
 const SOURCES = [
   ['CoinGecko', 'https://www.coingecko.com'],
   ['DefiLlama', 'https://defillama.com'],
-  ['GitHub', 'https://github.com'],
 ]
 
 export default function Footer() {

@@ -1,12 +1,15 @@
-import math
-
 import pytest
 
 from truffle.scoring import (change_pct, momentum, rank_scores, score_change, spread_factor,
                              weighted_score)
 
-W = {"volume_reputable": 0.2, "tvl": 0.2, "contributors": 0.2,
-     "commits": 0.15, "exchange_count": 0.1, "rel_btc": 0.15}
+# The production composite (config.yaml `weights`).
+W = {"volume_reputable": 0.20, "rel_btc": 0.15}
+
+# scoring.py takes its weight map as an argument, so the shrinkage maths is exercised over
+# a synthetic six-metric map: two weighted metrics only give two coverage levels, which
+# cannot show that f is monotone in coverage or that it never re-ranks within a bucket.
+WIDE = {"a": 0.2, "b": 0.2, "c": 0.2, "d": 0.15, "e": 0.1, "f": 0.15}
 
 
 def test_rank_transform_spans_full_range():
@@ -38,13 +41,13 @@ def test_rank_transform_degenerate_cases():
 
 
 def test_momentum_log_ratio_is_symmetric():
-    up, down = momentum("commits", 200, 100), momentum("commits", 100, 200)
+    up, down = momentum("tvl", 200, 100), momentum("tvl", 100, 200)
     assert up == pytest.approx(-down, abs=0.02)
 
 
 def test_momentum_handles_zero_prior():
-    assert momentum("commits", 10, 0) > 0
-    assert momentum("commits", 0, 0) == 0.0
+    assert momentum("tvl", 10, 0) > 0
+    assert momentum("tvl", 0, 0) == 0.0
 
 
 def test_momentum_rel_btc_is_a_difference():
@@ -56,23 +59,38 @@ def test_momentum_requires_both_sides():
 
 
 def test_weighted_average_ignores_nulls_and_renormalises():
-    ranks = {k: None for k in W}
-    ranks["commits"], ranks["rel_btc"] = 100.0, 0.0
+    score, raw, missing, coverage = weighted_score({"volume_reputable": None, "rel_btc": 0.0}, W)
+    # all the weight renormalises onto rel_btc -> raw 0, NOT 0*0.15/0.35 as zero-filling gives
+    assert raw == pytest.approx(0.0)
+    assert coverage == pytest.approx(0.4286, abs=1e-4)
+    assert missing == ["volume_reputable"]
+
+
+def test_unweighted_metrics_never_enter_the_composite():
+    """tvl and exchange_count are still collected and stored, but carry no weight,
+    so they neither move the score nor count as missing from it."""
+    ranks = {"volume_reputable": 80.0, "rel_btc": 80.0, "tvl": 0.0, "exchange_count": 0.0}
     score, raw, missing, coverage = weighted_score(ranks, W)
-    # 0.15/0.30 weight on each -> 50, NOT 100*0.15/1.0 == 15 as null-means-zero would give
-    assert score == raw == pytest.approx(50.0)   # already neutral: shrinkage cannot move it
-    assert coverage == pytest.approx(0.30)
-    assert "tvl" in missing and "commits" not in missing
+    assert score == raw == pytest.approx(80.0)
+    assert missing == [] and coverage == 1.0
+
+
+def test_single_weighted_metric_is_pulled_toward_neutral():
+    """With two weights (4:3) the factor is exactly 5/7 for either one alone."""
+    assert spread_factor(["volume_reputable"], W) == pytest.approx(5 / 7)
+    assert spread_factor(["rel_btc"], W) == pytest.approx(5 / 7)
+    score, raw, _, _ = weighted_score({"volume_reputable": 100.0, "rel_btc": None}, W)
+    assert raw == 100.0 and score == pytest.approx(50 + 50 * 5 / 7)
 
 
 def test_null_is_never_treated_as_zero():
-    full = {k: 80.0 for k in W}
-    partial = {**full, "tvl": None, "commits": None}
+    full = {k: 80.0 for k in WIDE}
+    partial = {**full, "c": None, "d": None}
     # the renormalised average itself is untouched by the missing metrics...
-    assert weighted_score(partial, W)[1] == pytest.approx(weighted_score(full, W)[1])
+    assert weighted_score(partial, WIDE)[1] == pytest.approx(weighted_score(full, WIDE)[1])
     # ...only the shrinkage toward 50 separates them, and it stays far above zero-filling
     # (0.65 coverage zero-filled would be 80*0.65 == 52)
-    assert weighted_score(partial, W)[0] == pytest.approx(74.32, abs=0.01)
+    assert weighted_score(partial, WIDE)[0] == pytest.approx(74.32, abs=0.01)
 
 
 def test_weighted_average_all_null():
@@ -81,27 +99,27 @@ def test_weighted_average_all_null():
 
 
 def test_full_coverage_is_unshrunk():
-    full = {k: 80.0 for k in W}
-    score, raw, _, coverage = weighted_score(full, W)
-    assert spread_factor(W, W) == pytest.approx(1.0)
+    full = {k: 80.0 for k in WIDE}
+    score, raw, _, coverage = weighted_score(full, WIDE)
+    assert spread_factor(WIDE, WIDE) == pytest.approx(1.0)
     assert coverage == 1.0 and score == raw == pytest.approx(80.0)
 
 
 def test_single_metric_is_pulled_substantially_toward_neutral():
-    one = {k: None for k in W} | {"tvl": 100.0}
-    score, raw, _, coverage = weighted_score(one, W)
+    one = {k: None for k in WIDE} | {"c": 100.0}
+    score, raw, _, coverage = weighted_score(one, WIDE)
     assert raw == 100.0 and coverage == pytest.approx(0.2)
-    assert spread_factor(["tvl"], W) == pytest.approx(0.4183, abs=1e-4)  # sqrt(0.175)
+    assert spread_factor(["c"], WIDE) == pytest.approx(0.4183, abs=1e-4)  # sqrt(0.175)
     assert score == pytest.approx(70.9, abs=0.1)
 
 
 def test_shrinkage_preserves_order_within_a_coverage_bucket():
     """f depends only on WHICH metrics are present, so two coins sharing a present-set
     keep their relative order -- the fix equalises spread, it does not re-rank."""
-    present = ["tvl", "commits", "rel_btc"]
-    coins = [{k: (v if k in present else None) for k in W}
+    present = ["c", "d", "f"]
+    coins = [{k: (v if k in present else None) for k in WIDE}
              for v in (5.0, 27.5, 49.9, 50.0, 50.1, 73.0, 96.0)]
-    scored = [weighted_score(c, W) for c in coins]
+    scored = [weighted_score(c, WIDE) for c in coins]
     raws = [s[1] for s in scored]
     adj = [s[0] for s in scored]
     assert raws == sorted(raws) and adj == sorted(adj)
@@ -109,10 +127,17 @@ def test_shrinkage_preserves_order_within_a_coverage_bucket():
     assert all(abs(a - 50) <= abs(r - 50) + 1e-9 for a, r in zip(adj, raws))
 
 
+def test_shrinkage_is_monotone_in_coverage():
+    """Every added metric narrows the gap to the full-coverage spread, up to f == 1."""
+    keys = list(WIDE)
+    factors = [spread_factor(keys[:n], WIDE) for n in range(1, len(keys) + 1)]
+    assert factors == sorted(factors) and factors[-1] == pytest.approx(1.0)
+
+
 def test_shrinkage_can_be_switched_off():
-    partial = {k: None for k in W} | {"tvl": 90.0, "commits": 90.0}
-    assert weighted_score(partial, W, shrink=False)[0] == pytest.approx(90.0)
-    assert weighted_score(partial, W, shrink=True)[0] < 90.0
+    partial = {k: None for k in WIDE} | {"c": 90.0, "d": 90.0}
+    assert weighted_score(partial, WIDE, shrink=False)[0] == pytest.approx(90.0)
+    assert weighted_score(partial, WIDE, shrink=True)[0] < 90.0
 
 
 def test_change_pct():

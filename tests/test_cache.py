@@ -24,9 +24,9 @@ def test_miss_returns_none(cache):
 
 def test_sources_are_namespaced(cache, tmp_path):
     cache.set("coingecko", "k", 1)
-    cache.set("github", "k", 2)
-    assert cache.get("coingecko", "k") == 1 and cache.get("github", "k") == 2
-    assert {p.name for p in tmp_path.iterdir()} == {"coingecko", "github"}
+    cache.set("defillama", "k", 2)
+    assert cache.get("coingecko", "k") == 1 and cache.get("defillama", "k") == 2
+    assert {p.name for p in tmp_path.iterdir()} == {"coingecko", "defillama"}
 
 
 def test_ttl_expiry(tmp_path):

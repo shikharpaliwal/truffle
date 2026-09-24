@@ -8,10 +8,14 @@ Base: `http://localhost:8000`. All JSON. Dates are `YYYY-MM-DD` (UTC).
 |---|---|---|---|
 | `volume_reputable` | 30d trading volume on green-trust-score exchanges | USD | yes |
 | `tvl` | DefiLlama total value locked | USD | yes (no protocol) |
-| `contributors` | distinct GitHub committers in period | count | yes (no repo) |
-| `commits` | commits across main repos in period | count | yes (no repo) |
 | `exchange_count` | number of exchanges listing the coin | count | yes (`prior` is null until ~30 days of our own history exist -- see `pending`) |
 | `rel_btc` | price performance relative to BTC over period | ratio, 0.0 = flat vs BTC | yes |
+
+**Changed 2026-09-24 (breaking).** `commits` and `contributors` are withdrawn: they are no
+longer collected, no longer keys of `metrics`, and no longer accepted as a `sort` value.
+Runs scored before this date still hold their rows in the database, but the API does not
+serve them. Only `volume_reputable` and `rel_btc` carry a weight in the composite; `tvl` and
+`exchange_count` are still collected and served, they just do not contribute to `score`.
 
 ## MetricValue object
 ```json
@@ -37,11 +41,14 @@ Base: `http://localhost:8000`. All JSON. Dates are `YYYY-MM-DD` (UTC).
   "score_change": 6.4,
   "missing": ["tvl"],
   "pending": [],
-  "metrics": { "volume_reputable": {MetricValue}, "tvl": {...}, "contributors": {...},
-               "commits": {...}, "exchange_count": {...}, "rel_btc": {...} }
+  "metrics": { "volume_reputable": {MetricValue}, "tvl": {...},
+               "exchange_count": {...}, "rel_btc": {...} }
 }
 ```
-`missing` lists metric keys that did not contribute to `score` for this coin/run.
+`missing` lists the **weighted** metric keys that did not contribute to `score` for this
+coin/run. An unweighted metric (`tvl`, `exchange_count`) never appears there: it could not
+have contributed. Rows written by older runs carry that run's `missing` list verbatim, so
+they may name keys that are no longer weighted or no longer exist.
 
 `score` is the composite after **variance shrinkage**: the weighted mean of the present `rank_score`s,
 recentred on 50 by `f = sqrt(sum q^2)/sqrt(sum p^2)` (`q` = weights over all metrics, `p` = over the present
@@ -54,10 +61,12 @@ are present only, so it never reorders two coins with the same `missing` set. So
 for runs scored before this field existed, and equals `score` when `scoring.variance_shrinkage` is off.
 
 `pending` is the subset of `missing` we have a `current` reading for but no `prior` window yet -- a metric
-whose prior comes from our own stored history (`exchange_count`) is pending until a run ~30 days older exists.
-Everything else in `missing` is genuinely unavailable (no GitHub repo, no DefiLlama protocol, API failure).
+whose prior comes from our own stored history is pending until a run ~30 days older exists.
+Everything else in `missing` is genuinely unavailable (no DefiLlama protocol, API failure).
 Both states are excluded from the score's renormalised weights alike: `pending` says *why* a metric is absent,
-never that it counted.
+never that it counted. Since 2026-09-24 the only such metric, `exchange_count`, is unweighted and so never
+reaches `missing`: `pending` is therefore `[]` on new runs. The field and its semantics are unchanged and it
+repopulates the moment a history-backed metric is given a weight.
 
 `score_prev`/`score_change` are `null` until a run exists on a strictly earlier `run_date` (same-day re-runs are not treated as history).
 
@@ -70,7 +79,7 @@ never that it counted.
 `{ "runs": [ { "run_date": "2026-09-23", "started_at": "...Z", "finished_at": "...Z", "coin_count": 300 } ] }` newest first.
 
 ### `GET /api/coins`
-Query: `date` (default latest run), `min_volume` (float, filters on `total_volume`), `sort` (any of `score|score_change|market_cap|market_cap_rank|volume_reputable|tvl|contributors|commits|exchange_count|rel_btc`, default `score`), `order` (`asc|desc`, default `desc`), `limit` (default 300), `offset`, `q` (name/symbol substring).
+Query: `date` (default latest run), `min_volume` (float, filters on `total_volume`), `sort` (any of `score|score_change|market_cap|market_cap_rank|volume_reputable|tvl|exchange_count|rel_btc`, default `score`), `order` (`asc|desc`, default `desc`), `limit` (default 300), `offset`, `q` (name/symbol substring).
 ```json
 { "run_date": "2026-09-23", "prev_run_date": "2026-09-22", "total": 300, "coins": [CoinRow, ...] }
 ```
@@ -90,6 +99,10 @@ Query: `date` (default latest).
 }
 ```
 `history` ascending by date and truncated at `date`, so an older run never shows later points. 404 if unknown coin.
+
+`github_repos` is unchanged and still served. It is identity metadata parsed out of the
+CoinGecko `/coins/{id}` response we already fetch (repo links for the coin page) and has
+never been a metric; withdrawing `commits`/`contributors` does not affect it.
 
 ### `GET /api/truffles`
 Query: `date`, `limit` (default 10), `min_volume`.

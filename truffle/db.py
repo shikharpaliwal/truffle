@@ -63,26 +63,6 @@ SCHEMA = [
     "CREATE INDEX IF NOT EXISTS ix_scores_run ON scores(run_id, score DESC)",
     "CREATE INDEX IF NOT EXISTS ix_scores_coin ON scores(coin_id, run_id)",
 
-    """CREATE TABLE IF NOT EXISTS github_repos (
-        repo TEXT PRIMARY KEY,      -- "owner/repo"
-        coin_id TEXT NOT NULL,
-        stars INTEGER,
-        archived INTEGER DEFAULT 0,
-        last_commit_at TEXT,        -- watermark: newest commit we have stored
-        checked_at TEXT,
-        error TEXT
-    )""",
-    "CREATE INDEX IF NOT EXISTS ix_repos_coin ON github_repos(coin_id)",
-
-    """CREATE TABLE IF NOT EXISTS repo_commits (
-        repo TEXT NOT NULL,
-        sha TEXT NOT NULL,
-        author TEXT,
-        committed_at TEXT NOT NULL,
-        PRIMARY KEY (repo, sha)
-    )""",
-    "CREATE INDEX IF NOT EXISTS ix_commits_window ON repo_commits(repo, committed_at)",
-
     """CREATE TABLE IF NOT EXISTS api_usage (
         host TEXT NOT NULL,
         year_month TEXT NOT NULL,   -- "YYYY-MM", UTC
@@ -160,6 +140,10 @@ def connect(path):
 # Columns added after the first release; ALTER on a DB that predates them.
 ADDED_COLUMNS = [("scores", "score_raw", "REAL")]
 
+# Retired features. The `commits`/`contributors` metrics were dropped, so the GitHub
+# tables that fed them are dropped too; their rows in `metrics` stay (runs append only).
+DROPPED_TABLES = ["repo_commits", "github_repos"]
+
 
 def migrate(con):
     for stmt in SCHEMA:
@@ -167,6 +151,8 @@ def migrate(con):
     for table, col, decl in ADDED_COLUMNS:
         if col not in {r["name"] for r in con.execute(f"PRAGMA table_info({table})")}:
             con.execute(f"ALTER TABLE {table} ADD COLUMN {col} {decl}")
+    for table in DROPPED_TABLES:
+        con.execute(f"DROP TABLE IF EXISTS {table}")
     con.commit()
     return con
 

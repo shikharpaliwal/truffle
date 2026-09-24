@@ -19,8 +19,6 @@ export const ratioPct = (v) => (v == null ? DASH : pct(v * 100))
 export const METRICS = [
   { key: 'volume_reputable', label: 'Volume', full: 'Reputable volume', fmt: usd },
   { key: 'tvl', label: 'TVL', full: 'DefiLlama TVL', fmt: usd, minor: true },
-  { key: 'contributors', label: 'Contributors', full: 'GitHub contributors', fmt: count },
-  { key: 'commits', label: 'Commits', full: 'Commits', fmt: count, minor: true },
   { key: 'exchange_count', label: 'Exchanges', full: 'Exchange listings', fmt: count, minor: true },
   { key: 'rel_btc', label: 'vs BTC', full: 'Performance vs BTC', fmt: ratioPct },
 ]

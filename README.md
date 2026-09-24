@@ -17,10 +17,9 @@ cp .env.example .env        # then edit it (see below)
 
 | `.env` var | required? | why |
 |---|---|---|
-| `GITHUB_TOKEN` | **yes, in practice** | unauthenticated GitHub allows 60 req/hr, not enough for even 20 coins. Any token (no scopes needed) gives 5000/hr. |
 | `COINGECKO_API_KEY` | **strongly recommended** | the public tier throttles at ~5 req/min. A free Demo key gives 100/min, capped at **10,000 call credits per calendar month**. |
 
-It runs without either — degrading, recording the failure and marking the affected
+It runs without it — degrading, recording the failure and marking the affected
 metrics missing — but a 300-coin run is not practical that way.
 
 **Attribution is required:** any UI built on this data must display
@@ -84,20 +83,25 @@ not running, the UI says so rather than showing anything else.
 
 ## The metrics
 
-All six compare the trailing 30 days against the prior 30 (`window_days`).
+All four compare the trailing 30 days against the prior 30 (`window_days`). Collection
+and scoring are separate concerns: every metric below is collected and stored on every
+run, but only the two with a weight in `config.yaml` feed the composite.
 
-| metric | what it measures | why it is hard to fake |
-|---|---|---|
-| `volume_reputable` | 30d volume scaled by the share of ticker volume on exchanges CoinGecko scores green (`trust_score >= 7`) | wash trading is cheap only on unranked venues; tier-1 venues mean real spread, real fees and audited order books |
-| `tvl` | mean DefiLlama TVL per window, matched on `gecko_id`; `null` where the coin has no protocol | faking it means actually locking capital in public contracts, at real opportunity cost; DefiLlama strips most double-counting |
-| `contributors` | distinct GitHub committers in the period | needs distinct real identities authoring real commits to a repo with real stars |
-| `commits` | commit count across the project's main repos | gameable alone, which is why it is weighted below `contributors` |
-| `exchange_count` | distinct green-trust-score exchanges listing the coin | listings are gated by third parties who run legal and technical review and charge for it |
-| `rel_btc` | coin 30d return − BTC 30d return (`0.0` = flat vs BTC) | the one deliberately market-based signal; subtracting BTC removes beta. Most gameable of the six, so it carries a modest weight |
+| metric | weighted? | what it measures | why it is hard to fake |
+|---|---|---|---|
+| `volume_reputable` | **0.20** | 30d volume scaled by the share of ticker volume on exchanges CoinGecko scores green (`trust_score >= 7`) | wash trading is cheap only on unranked venues; tier-1 venues mean real spread, real fees and audited order books |
+| `rel_btc` | **0.15** | coin 30d return − BTC 30d return (`0.0` = flat vs BTC) | the one deliberately market-based signal; subtracting BTC removes beta. The most gameable of the four, so it carries the smaller weight |
+| `tvl` | no | mean DefiLlama TVL per window, matched on `gecko_id`; `null` where the coin has no protocol | faking it means actually locking capital in public contracts, at real opportunity cost; DefiLlama strips most double-counting |
+| `exchange_count` | no | distinct green-trust-score exchanges listing the coin | listings are gated by third parties who run legal and technical review and charge for it |
 
-Repos come from CoinGecko `links.repos_url.github`, capped and star-filtered per
-`github.*` in `config.yaml`; commits are fetched incrementally from a per-repo
-`last_commit_at` watermark.
+`tvl` and `exchange_count` are stored but unweighted. They are kept collecting because a
+value/fundamental factor (TVL ÷ market cap) is an untested direction, and because
+`exchange_count`'s prior comes from our own history — deleting the collector would restart
+that clock at zero. The collectors are cheap; the history is not reproducible.
+
+GitHub activity (`commits`, `contributors`) was collected until 2026-09-24 and has been
+removed: the backtests found no edge in the composite it fed, and it is not a direction
+worth the API budget. The historical rows stay in `metrics`; nothing reads them.
 
 ## Scoring
 
@@ -117,14 +121,18 @@ Repos come from CoinGecko `links.repos_url.github`, capped and star-filtered per
    The centred score is therefore rescaled to the full-coverage spread:
 
    ```
-   f = sqrt(sum q_i^2) / sqrt(sum p_i^2)      # q = weights over ALL metrics, p = over the present ones
+   f = sqrt(sum q_i^2) / sqrt(sum p_i^2)      # q = weights over ALL weighted metrics, p = over the present ones
    score = 50 + (score_raw - 50) * f          # f <= 1, exactly 1 at full coverage
    ```
 
    `f` depends only on *which* metrics are present, never on their values, so
    ordering inside a coverage bucket is untouched; only the spread between buckets is
-   equalised. A single-metric coin keeps ~42% of its distance from 50, a 5-of-6 coin
-   ~93%, a full-coverage coin all of it. `score` is the shrunk number — it is what
+   equalised. Over the current two weighted metrics `f` is two-valued: exactly `1` with
+   both present and exactly `5/7` (the weights are 4:3) with either one alone, so a
+   half-measured coin keeps ~71% of its distance from 50. It still binds:
+   `volume_reputable` needs tickers and `rel_btc` needs a price chart, and on the last
+   300-coin run 20 coins had exactly one of the two.
+   `score` is the shrunk number — it is what
    `/api/coins` ranks on — and `score_raw` is kept beside it for debugging. Set
    `scoring.variance_shrinkage: false` in `config.yaml` for the plain average
    (`score == score_raw`).
@@ -144,12 +152,12 @@ Repos come from CoinGecko `links.repos_url.github`, capped and star-filtered per
 - **No prior for `exchange_count`** (nor the reputable-volume share) — CoinGecko
   gives them point-in-time only, so the prior comes from our own storage ~30 days
   back. Until the DB holds 30 days of real runs `exchange_count` has a `current` but
-  no `prior`, so it has no momentum, no `rank_score` and no weight: it is listed under
-  `missing` *and* under `pending` (a metric we can read but cannot score yet, as
-  opposed to one we never collected), and the coin page marks its chart "awaiting a
-  prior window" rather than showing it as a contributing metric. Never faked, never
-  zeroed — `weight_coverage` stays at 0.9 instead of claiming the metric counted, and
-  the variance shrinkage above prices in the missing weight rather than guessing at it.
+  no `prior`, so it has no momentum and no `rank_score`. Since it also carries no
+  weight it cannot reach the score by any route, so nothing is currently `pending`.
+  The `pending` machinery stays in place and stays tested: give any history-backed
+  metric a weight and it is listed under `missing` *and* under `pending` (a metric we
+  can read but cannot score yet, as opposed to one we never collected) while its weight
+  drops out of `weight_coverage` rather than being counted as present.
   The share is not scored itself: it scales the volume windows, and the prior window
   falls back to today's share until its own history exists. It is stored as
   `_reputable_share`; `_`-prefixed keys never reach the API.
@@ -157,7 +165,7 @@ Repos come from CoinGecko `links.repos_url.github`, capped and star-filtered per
   in `truffle/db.py`. Runs append only. Raw responses cache to
   `data/cache/<source>/` for `cache.ttl_seconds` (24h).
 - **Rate limits.** Per-host `rate_per_min` in `config.yaml`, jittered backoff,
-  `Retry-After`, GitHub's `X-RateLimit-*`. A host whose quota resets later than
+  `Retry-After`, `X-RateLimit-Reset`. A host whose quota resets later than
   `http.max_pause_seconds` is disabled for the rest of the run rather than stalling
   it; its metrics come back `null`. Shipped rates assume both keys are set.
 - **Monthly credit budget.** With a key the Demo plan's 10,000 credits/month binds,
@@ -167,7 +175,7 @@ Repos come from CoinGecko `links.repos_url.github`, capped and star-filtered per
   naming the credits left and the reset date. `--ignore-budget` overrides.
 - **Cadence.** A 300-coin run costs ~900 credits and ~35 min, so daily runs do not
   fit (~27,000/month). Weekly, or every third day, does. Later runs are cheaper:
-  metadata refreshes every 30 days, commits are incremental.
+  metadata refreshes every 30 days.
 
 ## Hourly OHLCV ingestion
 
@@ -253,10 +261,12 @@ closed.
    `run_errors` and the run continues. No source history? Use
    `prior_from_history(self.con, cid, "<key>", as_of, w)`.
 5. **If it can be negative**, add it to `scoring.DIFF_METRICS`.
-6. **Add a weight** under `weights` in `config.yaml`, plus an `http.hosts` entry for
-   a new domain. The rest is driven off `METRIC_KEYS` and `weights` (the shrinkage
-   factor re-derives itself from the new weight set; old runs keep their old scores
-   until recomputed).
+6. **Add a weight** under `weights` in `config.yaml` if it should score, plus an
+   `http.hosts` entry for a new domain. A key in `METRIC_KEYS` with no weight is
+   collected and stored but stays out of the composite — the supported way to
+   accumulate history for a factor before committing to it. The rest is driven off
+   `METRIC_KEYS` and `weights` (the shrinkage factor re-derives itself from the new
+   weight set; old runs keep their old scores until recomputed).
 7. **Test it** in `tests/test_metric_windows.py` (and `tests/test_history.py` if it
    needs stored history).
 
@@ -273,6 +283,7 @@ python research/backtest.py --dry-run   # cost projection only
 python research/backtest.py             # ~620 CoinGecko credits on a cold cache, then free
 python research/paper_log.py            # append today's firings to research/paper_log.jsonl
 python research/hourly.py               # hourly rerun against klines_1h; no network, no credits
+python research/factor.py               # cross-sectional long-short factors; free on a warm cache
 ```
 
 `backtest.py` evaluates short-window breakout signals point-in-time against the
@@ -286,8 +297,42 @@ with stops checked against actual hourly highs/lows, Binance `quoteVolume` for t
 liquidity tiering, an as-of-start universe, and an unconditional "buy anything"
 baseline. It reads the database and the response cache only -- no HTTP, no credits.
 
-**Result: no signal tested had positive expectancy after realistic costs.** The hourly
-rerun does not overturn this: its sample is a single +40% BTC quarter in which buying
-at random also pays, and no signal beats that baseline once entry days are treated as
-the unit of observation. See the backtests' own output; do not treat any of it as
-trading advice.
+`factor.py` asks a **structurally different question**. Everything above fires a signal,
+buys one coin and holds it — a long-only directional bet dominated by market beta, which
+is why the `BASELINE_always` control beat every signal. `factor.py` instead tests whether
+the cross-sectional *ranking* carries information once beta is removed: each week it ranks
+the as-of top 300 by market cap on eight momentum/reversal variants plus a size factor,
+goes equal-weight long the top quintile (and decile) and short the bottom, dollar-neutral,
+and charges fees and slippage on the **actual measured turnover**. Short costs use the real
+`funding_rates` table for the ~54% of coin-weeks with a mapped Binance perp; coins with no
+perp are charged an explicit assumed 15%/yr borrow. It reads the response cache and the
+database only — no HTTP, no credits — and reports gross, net at three slippage levels,
+breakeven cost, Sharpe, max drawdown, hit rate, a t-statistic with its confidence interval,
+and each factor's measured beta to the equal-weight universe.
+
+**Result: momentum is the wrong sign, reversal is the right sign but not significant, and
+costs eat both.** Over 40 weekly rebalances (2025-12-18 .. 2026-09-17):
+
+- Cross-sectional momentum was **negative at every lookback before any cost** (quintile
+  long-short: −2.64%/wk at 1w, −1.71% at 4w, −1.13% at 12w). Winners lost to losers.
+- **Short-term reversal** — the same coefficient with the sign flipped — is the only
+  positive cell: +1.84%/wk gross, but t = +0.64 and a 324%/week turnover that puts its
+  breakeven at 57 bp/side.
+- The most actionable construction (long-only top quintile of 1w reversal minus the
+  equal-weight universe, no shorting) is +69.8%/yr at 10 bp and +1.9%/yr at 100 bp,
+  t = +1.20. Suggestive, not established.
+- **"Dollar-neutral" is not market-neutral**: measured betas to the equal-weight universe
+  run +0.30 / +0.28 / +0.11 / −0.28 / +0.22 across the momentum lookbacks.
+- Real perp funding is a rounding error next to turnover (a short collected a median
+  +0.15%/week). Turnover is what kills these books, not borrow.
+- **Nothing in the 36-cell grid passes a Bonferroni correction** (largest |t| = 1.89,
+  threshold 3.43), and the equal-weight buy-everything control still beats most of it.
+
+**One year of weekly data cannot establish a factor.** With 40 observations and a ~10.7%
+weekly volatility on a quintile dollar-neutral book, the smallest detectable weekly mean is
+3.4% — so a real premium of the size the literature reports (single-digit percent per year,
+measured over 5+ years in crypto and 5+ decades in equities) is invisible here whether it
+exists or not. The module says so in its own output, flags its best cells as probable grid
+artefacts, and states the direction of the residual survivorship it cannot fix (the pool is
+today's top 600, so coins that died are absent — which biases momentum *down* and reversal
+*up*). None of this is trading advice.

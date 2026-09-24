@@ -1,7 +1,7 @@
 import json
 import os
 
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
 from truffle import config
@@ -45,8 +45,10 @@ def resolve_run(con, date):
 
 
 def metric_map(con, run_id, coin_ids=None):
-    q = "SELECT * FROM metrics WHERE run_id=? AND metric_key NOT LIKE '\\_%' ESCAPE '\\'"
-    args = [run_id]
+    # Restricted to METRIC_KEYS: `_`-prefixed keys are internal, and runs scored before a
+    # metric was retired still hold its rows (history is append-only, the API is not).
+    q = f"SELECT * FROM metrics WHERE run_id=? AND metric_key IN ({','.join('?' * len(METRIC_KEYS))})"
+    args = [run_id, *METRIC_KEYS]
     if coin_ids is not None:
         q += f" AND coin_id IN ({','.join('?' * len(coin_ids))})"
         args += list(coin_ids)

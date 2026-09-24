@@ -1,20 +1,21 @@
 import json
 import logging
-from collections import Counter, defaultdict
+from collections import Counter
 from datetime import datetime, timedelta, timezone
 
 from . import metadata, scoring
 from .cache import Cache
-from .db import add_usage, jload, open_db, usage_this_month
+from .db import add_usage, open_db, usage_this_month
 from .http import HttpClient
 from .metrics import exchanges as ex
-from .metrics import github as gh
 from .metrics import market as mk
 from .metrics import tvl as llama
 from .universe import build as build_universe
 
 log = logging.getLogger(__name__)
-METRIC_KEYS = ["volume_reputable", "tvl", "contributors", "commits", "exchange_count", "rel_btc"]
+# Collected and stored for every coin. Only the keys that also carry a weight in
+# config.yaml feed the composite; the rest accumulate history for later research.
+METRIC_KEYS = ["volume_reputable", "tvl", "exchange_count", "rel_btc"]
 SHARE_KEY = "_reputable_share"  # internal: lets a later run reconstruct a true prior-window share
 CG_HOST = "api.coingecko.com"
 
@@ -123,14 +124,13 @@ class Pipeline:
         extra = {}
 
         row = self.con.execute("SELECT * FROM coins WHERE coin_id=?", (cid,)).fetchone()
-        repos = jload(row["github_repos"]) if row else []
         slug = row["defillama_slug"] if row else None
         refresh_meta = not self.args.skip_metadata and metadata.needs_refresh(row, cfg["metadata"]["refresh_days"])
         if refresh_meta:
             detail = self.safe(lambda: metadata.fetch(self.http, cid), cid, "metadata")
             if detail is not None:
                 slug = slugs.get(cid)
-                repos = metadata.upsert(self.con, cid, market_row, detail, slug, cfg["github"]["max_repos_per_coin"])
+                metadata.upsert(self.con, cid, market_row, detail, slug)
             else:
                 metadata.touch(self.con, cid, market_row)
         else:
@@ -161,18 +161,6 @@ class Pipeline:
             if t:
                 vals["tvl"] = t
 
-        if repos:
-            for repo in repos:
-                ok, note = self.safe(
-                    lambda r=repo: gh.sync_repo(self.con, self.http, r, cid, cfg["github"]["commit_lookback_days"],
-                                                cfg["github"]["min_repo_stars"], refresh_meta),
-                    cid, f"github:{repo}") or (False, "skipped")
-                log.debug("  repo %s: %s", repo, note)
-            usable = gh.usable_repos(self.con, cid)
-            (c_cur, c_pri), (a_cur, a_pri) = gh.window_stats(self.con, usable, as_of, w)
-            if usable:
-                vals["commits"] = (c_cur, c_pri)
-                vals["contributors"] = (a_cur, a_pri)
         self.con.commit()
         return {"values": vals, "extra": extra}
 
@@ -260,9 +248,7 @@ class Pipeline:
         cg_rate = h["api.coingecko.com"]["rate_per_min"]
         cg = 1 + len(self.cfg["exclusions"]["categories"]) + 2 + n * 2  # markets+cats+exchanges+btc + chart/tickers
         meta = n  # /coins/{id} on first run or a 30-day refresh
-        gh_calls = n * self.cfg["github"]["max_repos_per_coin"] * 2
         log.info("projection for %d coins:", n)
         log.info("  coingecko: %d calls (+%d metadata on a cold run) @ %d/min -> %.1f min",
                  cg, meta, cg_rate, (cg + meta) / cg_rate)
         log.info("  defillama: ~%d calls (1 protocols listing + 1 per coin with a slug)", n + 1)
-        log.info("  github:    <=%d calls; unauthenticated budget is 60/hr, a token gives 5000/hr", gh_calls)

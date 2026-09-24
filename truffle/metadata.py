@@ -2,10 +2,23 @@ import json
 import logging
 from datetime import datetime, timedelta, timezone
 
-from .metrics.github import parse_repos
-
 log = logging.getLogger(__name__)
 CG = "https://api.coingecko.com/api/v3"
+MAX_REPOS = 3   # repo links are identity metadata only; nothing is fetched from GitHub
+
+
+def parse_repos(urls, limit=MAX_REPOS):
+    """"owner/repo" slugs from CoinGecko's links.repos_url.github, for display."""
+    out = []
+    for u in urls or []:
+        if not u or "github.com" not in u:
+            continue
+        parts = [p for p in u.split("github.com/")[-1].split("/") if p]
+        if len(parts) >= 2:
+            slug = f"{parts[0]}/{parts[1].removesuffix('.git')}"
+            if slug not in out:
+                out.append(slug)
+    return out[:limit]
 
 
 def needs_refresh(row, refresh_days):
@@ -22,10 +35,10 @@ def fetch(http, coin_id):
     }, allow_404=True)
 
 
-def upsert(con, coin_id, market_row, detail, llama_slug, max_repos):
+def upsert(con, coin_id, market_row, detail, llama_slug):
     links = (detail or {}).get("links") or {}
     home = next((h for h in (links.get("homepage") or []) if h), None)
-    repos = parse_repos((links.get("repos_url") or {}).get("github"), max_repos)
+    repos = parse_repos((links.get("repos_url") or {}).get("github"))
     con.execute(
         """INSERT INTO coins(coin_id,symbol,name,image,categories,github_repos,contract_addresses,
                              defillama_slug,homepage,metadata_updated_at)
