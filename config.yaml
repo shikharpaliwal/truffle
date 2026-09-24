@@ -108,6 +108,26 @@ github:
 metadata:
   refresh_days: 30
 
+# Hourly OHLCV ingestion from Binance (collect.py). Deliberately decoupled from the
+# scoring run: an hour of bars not collected today is gone for good, so this runs on
+# its own cadence and never blocks on CoinGecko credits.
+binance:
+  markets: [spot, perp]      # a coin listed on both is tracked twice; the pairs are different venues
+  workers: 8
+  backfill_days: 90
+  hourly_lookback_hours: 48  # how far back to start a symbol we have never collected
+  funding: true              # perpetual funding-rate history (futures only)
+  mapping:
+    # Binance base asset -> CoinGecko coin_id. Symbol equality alone is unsafe (tickers
+    # collide across projects), so a match only stands when the Binance price and the
+    # price CoinGecko last reported agree within this factor. It is deliberately loose:
+    # the CoinGecko side comes from the last scoring run and may be days old, while a
+    # genuine ticker collision is normally off by orders of magnitude.
+    price_tolerance: 2.0
+    # Futures quote some memecoins in lots; strip the lot size before matching and
+    # divide the price by it.
+    multiplier_prefixes: ["1000000", "1000"]
+
 http:
   timeout: 30
   max_retries: 4
@@ -130,3 +150,16 @@ http:
       rate_per_min: 80
     api.github.com:
       rate_per_min: 60
+    # Binance limits by request WEIGHT per minute, not by call count, and reports the
+    # running total in x-mbx-used-weight-1m. rate_per_min is the request spacing;
+    # weight_per_min is the server's own cap (klines cost 2, exchangeInfo 20,
+    # ticker/24hr 80). The client idles to the next minute at 80% of the cap.
+    api.binance.com:
+      rate_per_min: 1800
+      weight_per_min: 6000
+    fapi.binance.com:
+      rate_per_min: 1800
+      weight_per_min: 2400
+    data-api.binance.vision:   # public mirror, same limits; a manual fallback
+      rate_per_min: 1800
+      weight_per_min: 6000

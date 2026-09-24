@@ -90,6 +90,55 @@ SCHEMA = [
         PRIMARY KEY (host, year_month)
     )""",
 
+    # --- Binance hourly ingestion (independent of the scoring run) ---
+
+    """CREATE TABLE IF NOT EXISTS binance_symbols (
+        symbol TEXT NOT NULL,       -- "BTCUSDT", "1000PEPEUSDT"
+        market TEXT NOT NULL,       -- "spot" | "perp"
+        base_asset TEXT NOT NULL,
+        multiplier INTEGER NOT NULL DEFAULT 1,   -- 1000PEPE quotes 1000 PEPE
+        coin_id TEXT,               -- CoinGecko id; null unless resolved
+        status TEXT NOT NULL,       -- "mapped" | "ambiguous" | "unmapped"
+        note TEXT,                  -- why it is ambiguous / unmapped
+        price_ratio REAL,           -- binance price / coingecko price, 1.0 == agreement
+        tracked INTEGER NOT NULL DEFAULT 0,
+        manual INTEGER NOT NULL DEFAULT 0,       -- hand-resolved; the mapper leaves these alone
+        resolved_at TEXT,
+        PRIMARY KEY (symbol, market)
+    )""",
+    "CREATE INDEX IF NOT EXISTS ix_bsym_coin ON binance_symbols(coin_id, market)",
+    "CREATE INDEX IF NOT EXISTS ix_bsym_tracked ON binance_symbols(tracked, symbol)",
+
+    """CREATE TABLE IF NOT EXISTS klines_1h (
+        symbol TEXT NOT NULL,
+        market TEXT NOT NULL,
+        open_time INTEGER NOT NULL, -- epoch ms, UTC, bar start; closed bars only
+        open REAL, high REAL, low REAL, close REAL,
+        volume REAL,                -- base asset
+        quote_volume REAL,          -- USDT
+        trades INTEGER,
+        PRIMARY KEY (symbol, market, open_time)
+    ) WITHOUT ROWID""",
+
+    """CREATE TABLE IF NOT EXISTS funding_rates (
+        symbol TEXT NOT NULL,
+        funding_time INTEGER NOT NULL,
+        funding_rate REAL,
+        mark_price REAL,
+        PRIMARY KEY (symbol, funding_time)
+    ) WITHOUT ROWID""",
+
+    """CREATE TABLE IF NOT EXISTS ingest_runs (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        kind TEXT NOT NULL,         -- "hourly" | "backfill"
+        started_at TEXT NOT NULL,
+        finished_at TEXT,
+        symbols INTEGER, bars_fetched INTEGER, bars_new INTEGER, funding_new INTEGER,
+        peak_weight INTEGER,
+        failures TEXT               -- json object symbol -> message
+    )""",
+    "CREATE INDEX IF NOT EXISTS ix_ingest_kind ON ingest_runs(kind, id)",
+
     """CREATE TABLE IF NOT EXISTS run_errors (
         run_id INTEGER NOT NULL REFERENCES runs(id),
         coin_id TEXT, stage TEXT, message TEXT

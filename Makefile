@@ -4,7 +4,7 @@ PY   := $(VENV)/bin/python
 API_PORT ?= 8000
 WEB_PORT ?= 5173
 
-.PHONY: help install dev api web run run20 dry test lint clean reset
+.PHONY: help install dev api web run run20 dry collect backfill symbols test lint clean reset
 
 help:
 	@echo "make install   create venv, install python + node deps"
@@ -14,6 +14,9 @@ help:
 	@echo "make run       full 300-coin pipeline run"
 	@echo "make run20     20-coin run (quick check)"
 	@echo "make dry       projected API calls and credit cost, fetches nothing"
+	@echo "make collect   hourly Binance bars: backfills every gap since the last stored bar"
+	@echo "make backfill  one-time 90-day hourly history for the tracked symbols"
+	@echo "make symbols   rebuild the Binance symbol -> coin_id map only"
 	@echo "make test      pytest"
 	@echo "make clean     remove the response cache"
 	@echo "make reset     delete the database (destructive, asks first)"
@@ -45,6 +48,15 @@ run20:
 
 dry:
 	@$(PY) run.py --dry-run $(ARGS)
+
+collect:
+	@$(PY) collect.py $(ARGS)
+
+backfill:
+	@$(PY) collect.py --backfill $(ARGS)
+
+symbols:
+	@$(PY) collect.py --map $(ARGS)
 
 test:
 	@$(PY) -m pytest -q

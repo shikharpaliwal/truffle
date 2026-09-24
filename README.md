@@ -44,6 +44,17 @@ python run.py --dry-run          # universe + call/time projection, writes nothi
 | `--ignore-budget` | run even if it would exceed the month's remaining CoinGecko credits |
 | `-v` / `--verbose` | per-coin debug lines, including each coin's missing-metric list |
 
+### Collect hourly bars (Binance)
+
+Separate from the scoring run and on its own cadence — see
+[Hourly OHLCV ingestion](#hourly-ohlcv-ingestion).
+
+```bash
+python collect.py --map          # build/refresh the Binance symbol -> coin_id map
+python collect.py --backfill     # one-time 90-day history (binance.backfill_days)
+python collect.py                # incremental: every bar since the last one stored
+```
+
 ### Serve the API
 
 ```bash
@@ -158,6 +169,78 @@ Repos come from CoinGecko `links.repos_url.github`, capped and star-filtered per
   fit (~27,000/month). Weekly, or every third day, does. Later runs are cheaper:
   metadata refreshes every 30 days, commits are incremental.
 
+## Hourly OHLCV ingestion
+
+The scoring pipeline above is daily and fundamental. This is a second, independent
+collector: hourly 1h bars from Binance for the universe coins that trade there,
+`python collect.py` (`make collect`). It exists on its own because **an hour of bars
+not collected today cannot be collected later** — Binance serves the last ~5 years of
+klines, but only the exchange has them, and our own history has to start sometime. It
+feeds nothing yet; it only accumulates.
+
+```bash
+python collect.py --map            # rebuild the symbol map and stop
+python collect.py --backfill 90    # one-time history pull (default: binance.backfill_days)
+python collect.py                  # incremental run
+python collect.py --remap          # refresh the map, then collect
+```
+
+**Not scheduled for you.** To run it hourly, add one line to your own crontab —
+nothing in this repo installs it:
+
+```
+5 * * * * cd /path/to/truffle && .venv/bin/python collect.py >> data/collect.log 2>&1
+```
+
+Anything from every 15 minutes to once a day works: the collector reads the last
+stored bar per symbol and fetches only what is missing, paging 1000 bars at a time, so
+a skipped day or a fortnight offline costs extra requests and nothing else. Re-running
+inside the same hour asks for nothing at all, because a bar is only fetched once it has
+closed.
+
+- **Symbol map** (`binance_symbols`). Tickers collide across projects, so symbol
+  equality alone is not a mapping. A Binance base asset is matched to a `coin_id`
+  only when the symbol matches a coin in the latest run's universe **and** the
+  Binance price agrees with the price CoinGecko last reported within
+  `binance.mapping.price_tolerance` (default 2x — loose, because our CoinGecko side
+  may be days old, while a genuine collision is normally off by orders of magnitude).
+  Futures lot symbols (`1000PEPE`, `1000000MOG`) are divided by the lot size before
+  the comparison. Everything else is recorded and **flagged**, never guessed:
+  `unmapped` (no universe coin has that ticker — mostly rival exchange tokens and
+  coins Binance does not list) or `ambiguous` (the ticker matches but the price does
+  not, or several coins match). Where several universe coins share a ticker, the price
+  check picks the one that agrees, and only that one. Fix a flagged row by hand with
+  `UPDATE binance_symbols SET coin_id=..., status='mapped', tracked=1, manual=1`;
+  `manual=1` rows are never overwritten by a later `--map`.
+- **Coverage.** ~345 pairs over ~194 of the 300 coins (158 spot, 187 perp). The other
+  ~106 are exchange tokens (LEO, OKB, CRO, BGB, GT, KCS, WBT, HTX), tokenised RWAs and
+  coins with no Binance USDT pair. Spot and perp are tracked separately: they are
+  different venues with different prices, and the perp side carries funding.
+- **Storage.** `klines_1h(symbol, market, open_time)` — open/high/low/close, base
+  volume, quote volume and trade count per bar — as a `WITHOUT ROWID` table. The
+  primary key *is* the table, so there is no duplicate rowid b-tree and one symbol's
+  history is a single clustered range scan — which is both the only access pattern that
+  matters and a measured 22% off disk (90 vs 117 bytes/row over the 736k-row backfill,
+  so ~400 MB per year at 500 symbols). There is deliberately **no
+  index on `open_time` alone**: it would roughly double write cost and size, and a
+  cross-sectional "every symbol at hour T" query is 345 primary-key seeks, which is
+  fast enough. `funding_rates(symbol, funding_time)` stores perp funding the same way.
+  Open interest is **not** collected: Binance keeps only 30 days of it, so it can never
+  become history.
+- **Idempotency.** Bars upsert on their primary key, so a re-run overwrites rather than
+  duplicates — which also lets Binance revise a bar. Only *closed* bars are stored; the
+  in-progress one is dropped and picked up on the next run.
+- **Rate limits.** Binance limits by request **weight** per minute, not call count, and
+  reports the running total in `x-mbx-used-weight-1m`. `http.hosts.*.weight_per_min`
+  (6000 spot, 2400 futures) drives a weight limiter in the shared HTTP client that
+  idles to the next minute at 80% of the cap, steering by the server's own number
+  rather than a local estimate. Futures kline weight jumps from 2 to 5 at `limit >= 500`,
+  so futures page 499 bars at a time and spot pages 1000. No API key is needed and
+  none is sent; `data-api.binance.vision` is configured as a manual fallback host.
+- **Bookkeeping.** Each run appends to `ingest_runs` (kind, bars fetched/new, funding
+  rows, peak weight, per-symbol failures). Calls are counted into `api_usage` alongside
+  CoinGecko's, but Binance has no monthly credit budget, so nothing aborts on it.
+
 ## How to add a new metric
 
 1. **Pick the key.** A *visible* metric changes the frozen `docs/api-contract.md` —
@@ -178,3 +261,33 @@ Repos come from CoinGecko `links.repos_url.github`, capped and star-filtered per
    needs stored history).
 
 No migration needed — `metrics` is long-format, so a new key is just new rows.
+
+## `research/` (not part of the pipeline)
+
+Standalone signal-evaluation code. It imports `truffle.http` / `cache` / `config` so
+the rate limits and the monthly CoinGecko budget still apply, reads `data/truffle.db`
+read-only, and changes nothing in the pipeline, the scoring module or the API.
+
+```bash
+python research/backtest.py --dry-run   # cost projection only
+python research/backtest.py             # ~620 CoinGecko credits on a cold cache, then free
+python research/paper_log.py            # append today's firings to research/paper_log.jsonl
+python research/hourly.py               # hourly rerun against klines_1h; no network, no credits
+```
+
+`backtest.py` evaluates short-window breakout signals point-in-time against the
+production 30d-vs-prior-30d baseline, then simulates trades with fees, slippage,
+a stop and a time exit. `--dry-run` prints the projected credit cost and aborts if
+it would exceed `http.monthly_budget`. `paper_log.py` costs ~300 credits per run and
+is a log only — no orders, no recommendation.
+
+`hourly.py` reruns the same signals on the real hourly Binance bars in `klines_1h`,
+with stops checked against actual hourly highs/lows, Binance `quoteVolume` for the
+liquidity tiering, an as-of-start universe, and an unconditional "buy anything"
+baseline. It reads the database and the response cache only -- no HTTP, no credits.
+
+**Result: no signal tested had positive expectancy after realistic costs.** The hourly
+rerun does not overturn this: its sample is a single +40% BTC quarter in which buying
+at random also pays, and no signal beats that baseline once entry days are treated as
+the unit of observation. See the backtests' own output; do not treat any of it as
+trading advice.

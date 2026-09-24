@@ -1,0 +1,170 @@
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "ripple", "price": 1.501067834422198, "signals": ["S3_accel"], "z": 2.24, "ext": 1.122}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "solana", "price": 114.9853624488883, "signals": ["S3_accel"], "z": 2.04, "ext": 1.189}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "hyperliquid", "price": 93.98483378549584, "signals": ["S3_accel"], "z": 1.49, "ext": 1.199}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "dogecoin", "price": 0.09269308596250532, "signals": ["S2_volsurge", "S3_accel", "S4_S2_notext"], "z": 4.87, "ext": 1.135}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "chainlink", "price": 12.351351848968603, "signals": ["S3_accel"], "z": 0.31, "ext": 1.105}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "cardano", "price": 0.23845174386385729, "signals": ["S3_accel"], "z": 2.48, "ext": 1.187}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "bitcoin-cash", "price": 337.577742365817, "signals": ["S1_7v30", "S2_volsurge", "S3_accel"], "z": 7.9, "ext": 1.51}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "uniswap", "price": 9.235551975969209, "signals": ["S0_prod_30v30", "S1_7v30", "S2_volsurge", "S3_accel"], "z": 5.87, "ext": 2.097}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "near", "price": 4.333075476693107, "signals": ["S0_prod_30v30", "S1_7v30", "S2_volsurge", "S3_accel"], "z": 12.81, "ext": 2.313}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "avalanche-2", "price": 10.256142879486296, "signals": ["S1_7v30", "S2_volsurge", "S3_accel"], "z": 7.11, "ext": 1.409}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "litecoin", "price": 61.87754446805904, "signals": ["S2_volsurge", "S3_accel"], "z": 3.73, "ext": 1.252}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "hedera-hashgraph", "price": 0.09046609313283219, "signals": ["S2_volsurge", "S3_accel", "S4_S2_notext"], "z": 5.54, "ext": 1.22}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "sui", "price": 0.960054911797858, "signals": ["S1_7v30", "S2_volsurge", "S3_accel"], "z": 4.99, "ext": 1.329}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "shiba-inu", "price": 5.641028187874552e-06, "signals": ["S3_accel"], "z": 1.47, "ext": 1.106}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "bittensor", "price": 287.2856529331834, "signals": ["S1_7v30", "S2_volsurge", "S3_accel"], "z": 3.18, "ext": 1.292}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "memecore", "price": 1.22818306258527, "signals": ["S3_accel"], "z": -0.94, "ext": 1.078}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "aave", "price": 138.91419588249434, "signals": ["S3_accel"], "z": 1.04, "ext": 1.136}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "mantle", "price": 0.6530998052545554, "signals": ["S3_accel"], "z": 1.67, "ext": 1.266}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "ondo-finance", "price": 0.4123340416954338, "signals": ["S1_7v30", "S2_volsurge", "S3_accel", "S4_S2_notext", "S4b_S1S2_notext"], "z": 3.14, "ext": 1.141}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "ethena", "price": 0.2060619294428694, "signals": ["S3_accel"], "z": 0.8, "ext": 1.448}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "pump-fun", "price": 0.004002545045201973, "signals": ["S3_accel"], "z": 0.63, "ext": 1.092}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "pepe", "price": 4.329971412094779e-06, "signals": ["S1_7v30", "S2_volsurge", "S3_accel"], "z": 4.54, "ext": 1.276}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "polkadot", "price": 1.1016739891096146, "signals": ["S3_accel"], "z": 1.91, "ext": 1.29}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "morpho", "price": 2.568904276461924, "signals": ["S3_accel"], "z": 1.34, "ext": 1.159}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "worldcoin-wld", "price": 0.40648095012685925, "signals": ["S3_accel"], "z": 1.91, "ext": 1.101}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "internet-computer", "price": 2.9232604366814012, "signals": ["S3_accel"], "z": 2.69, "ext": 1.22}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "sky", "price": 0.0699492250085012, "signals": ["S2_volsurge", "S3_accel", "S4_S2_notext"], "z": 3.57, "ext": 1.131}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "venice-token", "price": 30.240175568798378, "signals": ["S0_prod_30v30", "S1_7v30", "S3_accel"], "z": 2.1, "ext": 1.835}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "ethereum-classic", "price": 8.731885629224216, "signals": ["S2_volsurge", "S3_accel", "S4_S2_notext"], "z": 3.42, "ext": 1.2}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "arbitrum", "price": 0.2159160799344789, "signals": ["S0_prod_30v30", "S3_accel"], "z": 2.56, "ext": 2.346}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "akedo", "price": 0.043288705570328524, "signals": ["S0_prod_30v30", "S1_7v30", "S3_accel"], "z": 0.93, "ext": 5.011}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "kaspa", "price": 0.03850903635100594, "signals": ["S3_accel"], "z": 2.3, "ext": 1.375}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "quant-network", "price": 70.67671393574498, "signals": ["S3_accel"], "z": 1.24, "ext": 1.15}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "algorand", "price": 0.1042551165269399, "signals": ["S2_volsurge", "S3_accel", "S4_S2_notext"], "z": 3.34, "ext": 1.172}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "cosmos", "price": 1.6956700226512214, "signals": ["S3_accel"], "z": 2.76, "ext": 1.129}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "render-token", "price": 1.7331004376283154, "signals": ["S1_7v30", "S2_volsurge", "S3_accel", "S4_S2_notext", "S4b_S1S2_notext"], "z": 4.65, "ext": 1.232}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "filecoin", "price": 0.9359168749799306, "signals": ["S1_7v30", "S2_volsurge", "S3_accel"], "z": 3.02, "ext": 1.297}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "vechain", "price": 0.008795678248351955, "signals": ["S0_prod_30v30", "S3_accel"], "z": 1.23, "ext": 1.532}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "injective-protocol", "price": 7.802255942922599, "signals": ["S1_7v30", "S2_volsurge", "S3_accel"], "z": 3.83, "ext": 1.568}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "aptos", "price": 0.7542822019388383, "signals": ["S1_7v30", "S2_volsurge", "S3_accel"], "z": 5.29, "ext": 1.287}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "aerodrome-finance", "price": 0.6635251021467372, "signals": ["S3_accel"], "z": 0.44, "ext": 1.382}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "ether-fi", "price": 0.6484318112218953, "signals": ["S3_accel"], "z": 0.42, "ext": 1.164}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "stable-2", "price": 0.026572318388956767, "signals": ["S3_accel"], "z": -0.61, "ext": 0.904}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "pudgy-penguins", "price": 0.009747956408243628, "signals": ["S2_volsurge", "S3_accel"], "z": 3.49, "ext": 1.351}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "blockstack", "price": 0.30745014971952694, "signals": ["S3_accel"], "z": 1.22, "ext": 1.312}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "pyth-network", "price": 0.06259460663208152, "signals": ["S3_accel"], "z": 0.04, "ext": 1.279}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "virtual-protocol", "price": 0.6987535181640011, "signals": ["S3_accel"], "z": 1.59, "ext": 1.13}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "pieverse", "price": 1.6887281606992994, "signals": ["S1_7v30", "S3_accel"], "z": 0.65, "ext": 1.66}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "layerzero", "price": 1.5008015543101358, "signals": ["S2_volsurge", "S3_accel"], "z": 4.18, "ext": 1.508}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "fetch-ai", "price": 0.1940572255891261, "signals": ["S2_volsurge", "S3_accel"], "z": 3.73, "ext": 1.272}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "raydium", "price": 1.9789215347015097, "signals": ["S0_prod_30v30", "S3_accel"], "z": 1.34, "ext": 2.568}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "celestia", "price": 0.4609314937127544, "signals": ["S2_volsurge", "S3_accel"], "z": 4.11, "ext": 1.344}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "bitcoin-cash-sv", "price": 22.180194308119322, "signals": ["S2_volsurge", "S3_accel"], "z": 4.95, "ext": 1.385}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "derive", "price": 0.4896710203739547, "signals": ["S0_prod_30v30", "S1_7v30", "S2_volsurge", "S3_accel"], "z": 4.34, "ext": 3.523}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "pendle", "price": 2.468054510795986, "signals": ["S2_volsurge"], "z": 3.07, "ext": 1.446}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "sei-network", "price": 0.059004681283102746, "signals": ["S1_7v30", "S2_volsurge", "S3_accel"], "z": 7.68, "ext": 1.331}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "midnight-3", "price": 0.023044495292816936, "signals": ["S3_accel"], "z": -0.12, "ext": 1.19}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "bittorrent", "price": 3.655178024905247e-07, "signals": ["S2_volsurge", "S3_accel"], "z": 11.38, "ext": 1.26}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "tezos", "price": 0.324752989444469, "signals": ["S1_7v30", "S3_accel"], "z": -0.08, "ext": 1.47}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "lido-dao", "price": 0.38499344761892007, "signals": ["S3_accel"], "z": 1.79, "ext": 1.063}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "bedrock-token", "price": 1.073979461694558, "signals": ["S0_prod_30v30", "S1_7v30", "S2_volsurge"], "z": 3.5, "ext": 4.63}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "useless-3", "price": 0.29438910675977503, "signals": ["S0_prod_30v30", "S3_accel"], "z": 1.66, "ext": 4.517}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "kite-2", "price": 0.13290195037358668, "signals": ["S3_accel"], "z": -0.23, "ext": 1.237}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "decred", "price": 18.272510045772247, "signals": ["S3_accel"], "z": 0.41, "ext": 1.317}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "bonk", "price": 3.5160590643487203e-06, "signals": ["S2_volsurge", "S3_accel", "S4_S2_notext"], "z": 4.45, "ext": 1.219}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "monad", "price": 0.023993654475471516, "signals": ["S3_accel"], "z": 0.58, "ext": 1.042}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "starknet", "price": 0.038332035043923664, "signals": ["S0_prod_30v30", "S1_7v30", "S2_volsurge", "S3_accel"], "z": 5.64, "ext": 1.445}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "optimism", "price": 0.1229179781736313, "signals": ["S1_7v30", "S2_volsurge", "S3_accel"], "z": 3.71, "ext": 1.304}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "grass", "price": 0.45033686312082866, "signals": ["S3_accel"], "z": 2.02, "ext": 1.364}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "floki", "price": 2.7234290060058824e-05, "signals": ["S2_volsurge", "S3_accel", "S4_S2_notext"], "z": 4.53, "ext": 1.138}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "conflux-token", "price": 0.05159283868487248, "signals": ["S3_accel"], "z": 1.28, "ext": 1.132}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "ethereum-name-service", "price": 6.75615243319893, "signals": ["S3_accel"], "z": 2.67, "ext": 1.217}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "arweave", "price": 4.305749593820438, "signals": ["S0_prod_30v30", "S1_7v30", "S2_volsurge", "S3_accel"], "z": 3.71, "ext": 2.036}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "the-graph", "price": 0.024885985732463027, "signals": ["S3_accel"], "z": 1.74, "ext": 1.527}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "plasma", "price": 0.08999507409158147, "signals": ["S3_accel"], "z": 0.08, "ext": 1.079}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "dogwifcoin", "price": 0.2335800557839487, "signals": ["S2_volsurge", "S3_accel", "S4_S2_notext"], "z": 5.0, "ext": 1.246}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "trust-wallet-token", "price": 0.538618088266709, "signals": ["S3_accel"], "z": 0.29, "ext": 1.219}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "bnb48-club-token", "price": 69.22673688856747, "signals": ["S0_prod_30v30"], "z": 0.26, "ext": 1.092}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "compound-governance-token", "price": 22.181956047835165, "signals": ["S3_accel"], "z": 1.16, "ext": 1.173}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "theta-token", "price": 0.21406396066065592, "signals": ["S3_accel"], "z": 0.36, "ext": 1.264}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "build-on", "price": 0.21480145200720255, "signals": ["S3_accel"], "z": -0.26, "ext": 1.334}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "zama", "price": 0.09211434310511939, "signals": ["S1_7v30", "S2_volsurge", "S3_accel"], "z": 3.35, "ext": 1.822}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "iota", "price": 0.0464346299049241, "signals": ["S3_accel"], "z": -0.3, "ext": 1.182}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "eigenlayer", "price": 0.23280077369353377, "signals": ["S3_accel"], "z": 0.86, "ext": 1.182}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "akash-network", "price": 0.683805740961544, "signals": ["S1_7v30", "S2_volsurge", "S3_accel"], "z": 4.98, "ext": 1.307}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "thorchain", "price": 0.6106804541774641, "signals": ["S3_accel"], "z": 0.73, "ext": 1.292}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "kaia", "price": 0.032801785873970056, "signals": ["S3_accel"], "z": 1.21, "ext": 1.139}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "mina-protocol", "price": 0.1467408896864815, "signals": ["S0_prod_30v30", "S1_7v30", "S2_volsurge", "S3_accel"], "z": 5.12, "ext": 2.442}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "zebec-network", "price": 0.002021803018964409, "signals": ["S3_accel"], "z": -0.78, "ext": 1.114}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "fartcoin", "price": 0.18431919239629044, "signals": ["S3_accel"], "z": 2.27, "ext": 1.274}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "backpack", "price": 0.8505394273049488, "signals": ["S0_prod_30v30", "S1_7v30", "S2_volsurge", "S3_accel"], "z": 5.56, "ext": 1.96}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "kamino", "price": 0.03529064326593281, "signals": ["S1_7v30", "S2_volsurge", "S3_accel"], "z": 3.86, "ext": 1.444}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "swissborg", "price": 0.18106775287426177, "signals": ["S2_volsurge", "S3_accel", "S4_S2_notext"], "z": 3.06, "ext": 1.089}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "ecash", "price": 8.789330065608139e-06, "signals": ["S1_7v30", "S3_accel"], "z": 0.27, "ext": 1.273}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "neo", "price": 2.4821723954279444, "signals": ["S3_accel"], "z": 0.61, "ext": 1.205}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "railgun", "price": 2.835096155100054, "signals": ["S1_7v30", "S2_volsurge", "S3_accel"], "z": 4.22, "ext": 1.432}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "telcoin", "price": 0.001729700361355073, "signals": ["S3_accel"], "z": 0.9, "ext": 1.033}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "chain-2", "price": 0.005276681250975647, "signals": ["S0_prod_30v30", "S3_accel"], "z": 0.9, "ext": 1.526}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "meteora", "price": 0.34395457344153185, "signals": ["S1_7v30", "S3_accel"], "z": 1.92, "ext": 1.76}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "collector-crypt", "price": 0.17286564130477994, "signals": ["S3_accel"], "z": -0.1, "ext": 1.063}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "sonic-3", "price": 0.040117099741268245, "signals": ["S1_7v30", "S2_volsurge", "S3_accel"], "z": 3.15, "ext": 1.512}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "aioz-network", "price": 0.11605673569343557, "signals": ["S0_prod_30v30", "S1_7v30", "S2_volsurge", "S3_accel"], "z": 11.16, "ext": 2.11}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "vaulta", "price": 0.09181300957225182, "signals": ["S1_7v30", "S3_accel"], "z": 0.32, "ext": 1.239}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "origintrail", "price": 0.34301350066191716, "signals": ["S3_accel"], "z": 0.07, "ext": 1.104}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "apecoin", "price": 0.1470326659201354, "signals": ["S3_accel"], "z": 1.8, "ext": 1.085}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "strategy-pp-variable-xstock", "price": 106.46766568192436, "signals": ["S3_accel"], "z": 0.88, "ext": 1.039}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "sentient", "price": 0.021032558402213013, "signals": ["S3_accel"], "z": 0.08, "ext": 1.573}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "seeker", "price": 0.020542980391565515, "signals": ["S0_prod_30v30", "S3_accel"], "z": 0.19, "ext": 2.51}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "havven", "price": 0.23143500594516175, "signals": ["S3_accel"], "z": -0.01, "ext": 1.092}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "lobster-2", "price": 0.16770888666486075, "signals": ["S0_prod_30v30"], "z": 1.95, "ext": 5.552}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "elrond-erd-2", "price": 4.157549488865979, "signals": ["S3_accel"], "z": 1.01, "ext": 1.197}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "basic-attention-token", "price": 0.08738498728767599, "signals": ["S3_accel"], "z": -0.06, "ext": 1.273}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "immutable-x", "price": 0.14544190213934557, "signals": ["S3_accel"], "z": -0.01, "ext": 1.197}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "chutes", "price": 19.496131423789834, "signals": ["S3_accel"], "z": -0.03, "ext": 1.144}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "celium", "price": 25.704731972209547, "signals": ["S3_accel"], "z": 2.29, "ext": 1.371}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "the-sandbox", "price": 0.040321985780169586, "signals": ["S3_accel"], "z": 1.52, "ext": 1.0}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "meta-2-2", "price": 5.624755005328571, "signals": ["S3_accel"], "z": -0.11, "ext": 1.075}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "zksync", "price": 0.011196097664443676, "signals": ["S3_accel"], "z": 0.6, "ext": 1.27}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "zano", "price": 7.59175886257707, "signals": ["S3_accel"], "z": 0.34, "ext": 0.936}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "four", "price": 0.28927899469070617, "signals": ["S3_accel"], "z": 2.82, "ext": 1.209}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "instadapp", "price": 1.3547490415398984, "signals": ["S3_accel"], "z": -0.27, "ext": 1.115}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "geodnet", "price": 0.25437080470465945, "signals": ["S1_7v30"], "z": 0.22, "ext": 1.153}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "dydx-chain", "price": 0.12679255112755558, "signals": ["S1_7v30", "S3_accel"], "z": -0.06, "ext": 1.116}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "quack-ai", "price": 0.02692837359802907, "signals": ["S3_accel"], "z": -0.72, "ext": 1.187}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "dog-go-to-the-moon-rune", "price": 0.0011407590427724083, "signals": ["S3_accel"], "z": 1.09, "ext": 1.15}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "genius-3", "price": 0.34136945310289224, "signals": ["S1_7v30"], "z": 2.74, "ext": 1.037}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "aethir", "price": 0.005880195465848217, "signals": ["S2_volsurge", "S3_accel"], "z": 3.64, "ext": 1.31}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "melania-meme", "price": 0.10376703595761556, "signals": ["S3_accel"], "z": -0.3, "ext": 1.051}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "circle-internet-group-ondo-tokenized-stock", "price": 93.17015157851422, "signals": ["S3_accel"], "z": 0.5, "ext": 1.07}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "reserve-rights-token", "price": 0.0016279881553743058, "signals": ["S3_accel"], "z": -0.28, "ext": 1.206}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "gala", "price": 0.001907189140497477, "signals": ["S3_accel"], "z": 0.68, "ext": 1.069}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "plume", "price": 0.015708688103271688, "signals": ["S3_accel"], "z": 0.08, "ext": 1.199}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "microstrategy-xstock", "price": 162.3177634760546, "signals": ["S3_accel"], "z": 2.15, "ext": 1.32}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "superfarm", "price": 0.17590541424329784, "signals": ["S1_7v30", "S2_volsurge", "S3_accel"], "z": 3.59, "ext": 1.649}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "bulla-3", "price": 0.09087266675055476, "signals": ["S0_prod_30v30"], "z": -0.28, "ext": 5.249}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "beam-2", "price": 0.0019245982887336568, "signals": ["S0_prod_30v30"], "z": -0.03, "ext": 1.271}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "debridge", "price": 0.020321936585207576, "signals": ["S2_volsurge", "S3_accel"], "z": 3.11, "ext": 1.366}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "bermuda-shorts", "price": 2.2916350628578915e-05, "signals": ["S3_accel"], "z": 1.22, "ext": 1.036}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "unitywallet-token", "price": 0.1360925713570939, "signals": ["S0_prod_30v30", "S3_accel"], "z": -0.39, "ext": 1.706}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "targon", "price": 15.533302148673457, "signals": ["S3_accel"], "z": 0.18, "ext": 1.219}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "helium", "price": 0.5081823597741604, "signals": ["S0_prod_30v30"], "z": 0.02, "ext": 2.512}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "nockchain", "price": 0.029688176420110533, "signals": ["S0_prod_30v30"], "z": 2.1, "ext": 1.761}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "kinetiq", "price": 0.3360023443833912, "signals": ["S3_accel"], "z": 0.53, "ext": 1.886}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "arkham", "price": 0.12182003395455228, "signals": ["S2_volsurge", "S3_accel", "S4_S2_notext"], "z": 4.47, "ext": 1.201}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "orca", "price": 1.531435324336836, "signals": ["S3_accel"], "z": 0.12, "ext": 1.222}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "chip-2", "price": 0.042096077470375, "signals": ["S3_accel"], "z": 0.24, "ext": 1.292}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "walrus-2", "price": 0.03264872473480911, "signals": ["S3_accel"], "z": 0.62, "ext": 1.291}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "peaq-2", "price": 0.03466003686278208, "signals": ["S0_prod_30v30", "S3_accel"], "z": 2.86, "ext": 1.674}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "zetachain", "price": 0.050158204595324996, "signals": ["S0_prod_30v30", "S1_7v30", "S2_volsurge", "S3_accel"], "z": 25.63, "ext": 1.54}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "safe", "price": 0.10476667434350903, "signals": ["S3_accel"], "z": 0.23, "ext": 1.143}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "kaito", "price": 0.3256632961045617, "signals": ["S3_accel"], "z": -0.25, "ext": 0.948}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "gmx", "price": 7.884743459539076, "signals": ["S3_accel"], "z": 0.8, "ext": 1.088}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "livepeer", "price": 1.6409624639603517, "signals": ["S3_accel"], "z": 1.0, "ext": 1.215}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "purr-2", "price": 0.13157261676620877, "signals": ["S3_accel"], "z": 0.73, "ext": 1.238}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "yearn-finance", "price": 2306.0739314076923, "signals": ["S3_accel"], "z": -0.41, "ext": 1.066}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "exod", "price": 8.19418272, "signals": ["S3_accel"], "z": null, "ext": 1.266}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "velo", "price": 0.004502159927775913, "signals": ["S3_accel"], "z": 1.1, "ext": 1.166}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "redstone-oracles", "price": 0.1512735892931021, "signals": ["S3_accel"], "z": -0.35, "ext": 1.384}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "project-galaxy", "price": 0.621041040317573, "signals": ["S0_prod_30v30", "S1_7v30", "S3_accel"], "z": -0.1, "ext": 2.071}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "circle-xstock", "price": 93.40311390996104, "signals": ["S3_accel"], "z": 2.52, "ext": 1.073}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "theta-fuel", "price": 0.010482333107418088, "signals": ["S0_prod_30v30"], "z": -0.14, "ext": 1.19}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "story-2", "price": 0.22486560983022996, "signals": ["S3_accel"], "z": 0.12, "ext": 1.156}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "holotoken", "price": 0.00042283994934565574, "signals": ["S3_accel"], "z": 0.62, "ext": 1.14}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "cross-2", "price": 0.14392595152180668, "signals": ["S1_7v30"], "z": 0.15, "ext": 1.364}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "wormhole", "price": 0.011205341827706508, "signals": ["S1_7v30", "S3_accel"], "z": 0.28, "ext": 1.219}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "mubarak", "price": 0.05280690883646007, "signals": ["S1_7v30", "S2_volsurge", "S3_accel"], "z": 8.6, "ext": 2.465}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "nexpace", "price": 0.2438745777191753, "signals": ["S3_accel"], "z": 1.46, "ext": 1.143}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "zilliqa", "price": 0.00361318224039104, "signals": ["S3_accel"], "z": -0.09, "ext": 1.368}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "turbo", "price": 0.0010153350635255644, "signals": ["S3_accel"], "z": 0.78, "ext": 1.117}
+{"logged_at": "2026-09-24T09:21:13+00:00", "as_of": "2026-09-24", "coin_id": "sushi", "price": 0.24595419168874424, "signals": ["S3_accel"], "z": 0.08, "ext": 1.281}

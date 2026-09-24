@@ -34,6 +34,42 @@ class _HostLimiter:
             self.next_ok = max(self.next_ok, time.monotonic() + seconds)
 
 
+class _WeightLimiter:
+    """Binance's model: a call costs weight against a per-minute cap and the response
+    reports the running total, so we steer by the server's count rather than our own.
+    The counter resets on the wall-clock minute, so that is what we idle to."""
+
+    HEADER = "x-mbx-used-weight-1m"
+
+    def __init__(self, cap, reserve=0.2):
+        self.cap, self.ceiling = cap, cap * (1 - reserve)
+        self.used = self.peak = self.epoch = 0
+        self.lock = threading.Lock()
+
+    def gate(self):
+        """Returns the counter epoch this request belongs to."""
+        # Held across the sleep on purpose: every other thread must wait out the minute too.
+        with self.lock:
+            if self.used < self.ceiling:
+                return self.epoch
+            wait = 61 - time.time() % 60
+            log.warning("weight %d/%d used; idling %.0fs to the next minute", self.used, self.cap, wait)
+            time.sleep(wait)
+            self.used, self.epoch = 0, self.epoch + 1
+            return self.epoch
+
+    def observe(self, r, epoch):
+        v = r.headers.get(self.HEADER)
+        if v is None:
+            return
+        with self.lock:
+            self.peak = max(self.peak, int(v))
+            # A reply issued before the counter reset carries a stale total; applying it
+            # would re-trip the gate and idle out another whole minute.
+            if epoch == self.epoch:
+                self.used = max(self.used, int(v))
+
+
 class HttpClient:
     def __init__(self, cfg, cache):
         h = cfg["http"]
@@ -41,8 +77,10 @@ class HttpClient:
         self.max_retries, self.base, self.cap = h["max_retries"], h["backoff_base"], h["backoff_cap"]
         self.limiters = {host: _HostLimiter(v.get("rate_per_min", 60)) for host, v in h["hosts"].items()}
         self.default_limiter = _HostLimiter(30)
-        self.session = requests.Session()
-        self.session.headers["User-Agent"] = "truffle-scanner/0.1"
+        self.weights = {host: _WeightLimiter(v["weight_per_min"])
+                        for host, v in h["hosts"].items() if v.get("weight_per_min")}
+        self._local = threading.local()      # requests.Session is not thread-safe; give each one its own
+        self._stats_lock = threading.Lock()
         self.cg_key, self.gh_token = cfg["coingecko_key"], cfg["github_token"]
         self.max_pause = h.get("max_pause_seconds", 120)
         self.disabled = {}  # host -> why; set when a reset is further off than max_pause
@@ -50,6 +88,14 @@ class HttpClient:
         self.per_host = Counter()   # for the monthly credit budget
         self.rate_limit_events = 0
         self.waited = 0.0
+
+    @property
+    def session(self):
+        s = getattr(self._local, "session", None)
+        if s is None:
+            s = self._local.session = requests.Session()
+            s.headers["User-Agent"] = "truffle-scanner/0.1"
+        return s
 
     def _limiter(self, url):
         return self.limiters.get(urlparse(url).netloc, self.default_limiter)
@@ -64,7 +110,9 @@ class HttpClient:
                 headers["Authorization"] = f"Bearer {self.gh_token}"
         return headers, params
 
-    def get_json(self, source, url, params=None, cache_key=None, headers=None, allow_404=False):
+    def get_json(self, source, url, params=None, cache_key=None, headers=None, allow_404=False, cache=True):
+        if not cache:
+            return self._request(url, params, headers or {}, allow_404)
         key = cache_key or f"{url}?{sorted((params or {}).items())}"
         cached = self.cache.get(source, key)
         if cached is not None:
@@ -79,9 +127,10 @@ class HttpClient:
         if host in self.disabled:
             raise ApiError(f"{host} disabled for this run: {self.disabled[host]}")
         headers, params = self._auth(url, headers, params)
-        limiter = self._limiter(url)
+        limiter, weight = self._limiter(url), self.weights.get(host)
         last = None
         for attempt in range(self.max_retries + 1):
+            epoch = weight.gate() if weight else None
             limiter.wait()
             try:
                 r = self.session.get(url, params=params, headers=headers, timeout=self.timeout)
@@ -89,11 +138,15 @@ class HttpClient:
                 last = e
                 self._sleep(limiter, attempt, f"{url}: {e}")
                 continue
-            self.calls += 1
-            self.per_host[host] += 1
+            with self._stats_lock:
+                self.calls += 1
+                self.per_host[host] += 1
+            if weight:
+                weight.observe(r, epoch)
             if r.status_code == 404 and allow_404:
                 return None
-            if r.status_code == 429 or (r.status_code == 403 and "rate limit" in r.text.lower()):
+            # 418 is Binance's "you ignored a 429"; both carry Retry-After.
+            if r.status_code in (418, 429) or (r.status_code == 403 and "rate limit" in r.text.lower()):
                 self.rate_limit_events += 1
                 if self._budget_exhausted(r, host):
                     raise ApiError(self.disabled[host])
@@ -153,6 +206,8 @@ class HttpClient:
         limiter.pause(delay)
 
     def stats(self):
-        return {"calls": self.calls, "rate_limit_events": self.rate_limit_events,
-                "backoff_seconds": round(self.waited, 1), "disabled_hosts": list(self.disabled),
-                **self.cache.stats()}
+        out = {"calls": self.calls, "rate_limit_events": self.rate_limit_events,
+               "backoff_seconds": round(self.waited, 1), "disabled_hosts": list(self.disabled),
+               **self.cache.stats()}
+        peaks = {h: w.peak for h, w in self.weights.items() if w.peak}
+        return {**out, "peak_weight": peaks} if peaks else out
